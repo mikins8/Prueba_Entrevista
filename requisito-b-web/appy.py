@@ -3,7 +3,7 @@ import os
 import sqlite3
 from flask import (
     Flask, render_template, request,
-    redirect, url_for, flash, abort
+    redirect, url_for, flash, abort, jsonify
 )
 
 app = Flask(__name__)
@@ -274,6 +274,207 @@ def eliminar(cliente_id):
 
     flash("Cliente eliminado correctamente.", "success")
     return redirect(url_for("index"))
+
+
+# Campos que acepta la API
+CAMPOS_API = [
+    "nombre_contacto",
+    "empresa",
+    "email",
+    "telefono",
+    "estado",
+    "direccion",
+    "pais",
+    "comercial_asignado",
+    "fecha_alta",
+    "facturacion_acumulada",
+]
+
+
+def validar_cliente_api(data):
+    errores = []
+
+    if not isinstance(data, dict):
+        return ["El cuerpo de la petición debe ser un objeto JSON."]
+
+    nombre = data.get("nombre_contacto")
+    empresa = data.get("empresa")
+    email = data.get("email")
+    estado = data.get("estado", "Activo")
+    fecha = data.get("fecha_alta")
+    facturacion = data.get("facturacion_acumulada", 0)
+
+    if not isinstance(nombre, str) or not nombre.strip():
+        errores.append("nombre_contacto es obligatorio.")
+
+    if not isinstance(empresa, str) or not empresa.strip():
+        errores.append("empresa es obligatoria.")
+
+    if not isinstance(email, str) or "@" not in email:
+        errores.append("email debe ser un correo válido.")
+
+    if estado not in ("Activo", "Inactivo"):
+        errores.append("estado debe ser Activo o Inactivo.")
+
+    if not isinstance(fecha, str) or not fecha.strip():
+        errores.append("fecha_alta es obligatoria.")
+
+    try:
+        importe = float(facturacion)
+        if importe < 0:
+            errores.append(
+                "facturacion_acumulada no puede ser negativa."
+            )
+    except (TypeError, ValueError):
+        errores.append(
+            "facturacion_acumulada debe ser un número."
+        )
+
+    return errores
+
+
+def valores_cliente_api(data):
+    return (
+        data["nombre_contacto"].strip(),
+        data["empresa"].strip(),
+        data["email"].strip(),
+        str(data.get("telefono") or "").strip(),
+        data.get("estado", "Activo"),
+        str(data.get("direccion") or "").strip(),
+        str(data.get("pais") or "").strip(),
+        str(data.get("comercial_asignado") or "").strip(),
+        data["fecha_alta"].strip(),
+        float(data.get("facturacion_acumulada", 0)),
+    )
+
+
+def cliente_a_json(cliente):
+    return dict(cliente)
+
+
+@app.route("/api/clientes", methods=["GET"])
+def api_listar_clientes():
+    with get_db() as conn:
+        clientes = conn.execute(
+            "SELECT * FROM clientes ORDER BY id"
+        ).fetchall()
+
+    return jsonify([cliente_a_json(c) for c in clientes]), 200
+
+
+@app.route("/api/clientes/<int:cliente_id>", methods=["GET"])
+def api_obtener_cliente(cliente_id):
+    with get_db() as conn:
+        cliente = conn.execute(
+            "SELECT * FROM clientes WHERE id = ?",
+            (cliente_id,)
+        ).fetchone()
+
+    if cliente is None:
+        return jsonify({
+            "error": "Cliente no encontrado",
+            "id": cliente_id
+        }), 404
+
+    return jsonify(cliente_a_json(cliente)), 200
+
+
+@app.route("/api/clientes", methods=["POST"])
+def api_crear_cliente():
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({
+            "error": "Se requiere un cuerpo JSON válido."
+        }), 400
+
+    errores = validar_cliente_api(data)
+
+    if errores:
+        return jsonify({"errores": errores}), 400
+
+    try:
+        with get_db() as conn:
+            cursor = conn.execute(
+                """INSERT INTO clientes (
+                    nombre_contacto, empresa, email, telefono,
+                    estado, direccion, pais, comercial_asignado,
+                    fecha_alta, facturacion_acumulada
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                valores_cliente_api(data)
+            )
+            nuevo_id = cursor.lastrowid
+
+            cliente = conn.execute(
+                "SELECT * FROM clientes WHERE id = ?",
+                (nuevo_id,)
+            ).fetchone()
+
+        return jsonify(cliente_a_json(cliente)), 201
+
+    except sqlite3.IntegrityError:
+        return jsonify({
+            "error": "No se pudo crear el cliente. "
+                     "Comprueba si el email ya existe."
+        }), 409
+
+
+@app.route("/api/clientes/<int:cliente_id>", methods=["PUT"])
+def api_actualizar_cliente(cliente_id):
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({
+            "error": "Se requiere un cuerpo JSON válido."
+        }), 400
+
+    errores = validar_cliente_api(data)
+
+    if errores:
+        return jsonify({"errores": errores}), 400
+
+    try:
+        with get_db() as conn:
+            existente = conn.execute(
+                "SELECT id FROM clientes WHERE id = ?",
+                (cliente_id,)
+            ).fetchone()
+
+            if existente is None:
+                return jsonify({
+                    "error": "Cliente no encontrado",
+                    "id": cliente_id
+                }), 404
+
+            conn.execute(
+                """UPDATE clientes SET
+                    nombre_contacto = ?,
+                    empresa = ?,
+                    email = ?,
+                    telefono = ?,
+                    estado = ?,
+                    direccion = ?,
+                    pais = ?,
+                    comercial_asignado = ?,
+                    fecha_alta = ?,
+                    facturacion_acumulada = ?,
+                    fecha_ultima_modificacion = CURRENT_TIMESTAMP
+                WHERE id = ?""",
+                valores_cliente_api(data) + (cliente_id,)
+            )
+
+            cliente = conn.execute(
+                "SELECT * FROM clientes WHERE id = ?",
+                (cliente_id,)
+            ).fetchone()
+
+        return jsonify(cliente_a_json(cliente)), 200
+
+    except sqlite3.IntegrityError:
+        return jsonify({
+            "error": "No se pudo actualizar el cliente. "
+                     "Comprueba si el email ya existe."
+        }), 409
 
 
 @app.errorhandler(404)
