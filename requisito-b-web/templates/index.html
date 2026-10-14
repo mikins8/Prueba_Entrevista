@@ -1,0 +1,129 @@
+
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <h1>Clientes</h1>
+        <p class="muted">{{ total }} resultado(s)</p>
+    </div>
+</section>
+
+<form class="card filters" method="get" action="{{ url_for('index') }}">
+    <div class="field">
+        <label for="q">Buscar</label>
+        <input id="q" name="q" value="{{ busqueda }}"
+               placeholder="Nombre, empresa o email">
+    </div>
+
+    <div class="field">
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado">
+            <option value="">Todos</option>
+            <option value="Activo" {% if estado == 'Activo' %}selected{% endif %}>Activo</option>
+            <option value="Inactivo" {% if estado == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="pais">País</label>
+        <select id="pais" name="pais">
+            <option value="">Todos</option>
+            {% for item in paises %}
+                <option value="{{ item['pais'] }}"
+                    {% if pais == item['pais'] %}selected{% endif %}>
+                    {{ item['pais'] }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="comercial">Comercial</label>
+        <select id="comercial" name="comercial">
+            <option value="">Todos</option>
+            {% for item in comerciales %}
+                <option value="{{ item['comercial_asignado'] }}"
+                    {% if comercial == item['comercial_asignado'] %}selected{% endif %}>
+                    {{ item['comercial_asignado'] }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-actions">
+        <button class="button primary" type="submit">Filtrar</button>
+        <a class="button secondary" href="{{ url_for('index') }}">Limpiar</a>
+    </div>
+</form>
+
+<section class="card table-card">
+    {% if clientes %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Contacto</th>
+                    <th>Empresa</th>
+                    <th>Email</th>
+                    <th>País</th>
+                    <th>Estado</th>
+                    <th>Comercial</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('detalle', cliente_id=cliente['id']) }}">
+                            {{ cliente['nombre_contacto'] }}
+                        </a>
+                    </td>
+                    <td>{{ cliente['empresa'] }}</td>
+                    <td>{{ cliente['email'] }}</td>
+                    <td>{{ cliente['pais'] or '—' }}</td>
+                    <td>
+                        <span class="status {{ 'activo' if cliente['estado'] == 'Activo' else 'inactivo' }}">
+                            {{ cliente['estado'] }}
+                        </span>
+                    </td>
+                    <td>{{ cliente['comercial_asignado'] or '—' }}</td>
+                    <td>
+                        <a href="{{ url_for('editar', cliente_id=cliente['id']) }}">Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="empty">
+            <h2>No se han encontrado clientes</h2>
+            <p>Prueba a modificar los filtros o crea un nuevo cliente.</p>
+        </div>
+    {% endif %}
+</section>
+
+{% if total_paginas > 1 %}
+<nav class="pagination">
+    {% if pagina > 1 %}
+        <a class="button secondary"
+           href="{{ url_for('index', q=busqueda, estado=estado, pais=pais, comercial=comercial, pagina=pagina-1) }}">
+            ← Anterior
+        </a>
+    {% endif %}
+
+    <span>Página {{ pagina }} de {{ total_paginas }}</span>
+
+    {% if pagina < total_paginas %}
+        <a class="button secondary"
+           href="{{ url_for('index', q=busqueda, estado=estado, pais=pais, comercial=comercial, pagina=pagina+1) }}">
+            Siguiente →
+        </a>
+    {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

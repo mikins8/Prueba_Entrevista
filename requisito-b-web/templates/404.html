@@ -1,0 +1,14 @@
+
+{% extends "base.html" %}
+
+{% block title %}Página no encontrada{% endblock %}
+
+{% block content %}
+<section class="card empty">
+    <h1>404 — Página no encontrada</h1>
+    <p>El cliente o la página que buscas no existe.</p>
+    <a class="button primary" href="{{ url_for('index') }}">
+        Volver al listado
+    </a>
+</section>
+{% endblock %}

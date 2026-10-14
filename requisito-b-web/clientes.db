@@ -1,0 +1,797 @@
+CREATE TABLE IF NOT EXISTS clientes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    nombre_contacto TEXT NOT NULL,
+
+    empresa TEXT NOT NULL,
+
+    email TEXT NOT NULL UNIQUE,
+
+    telefono TEXT,
+
+    estado TEXT NOT NULL
+        CHECK (estado IN ('Activo', 'Inactivo')),
+
+    direccion TEXT,
+
+    pais TEXT NOT NULL,
+
+    comercial_asignado TEXT,
+
+    fecha_alta DATE NOT NULL,
+
+    facturacion_acumulada REAL NOT NULL DEFAULT 0
+        CHECK (facturacion_acumulada >= 0),
+
+    fecha_ultima_modificacion DATETIME NOT NULL
+);
+
+
+-- ============================================================
+-- 2. INSERTAR 50 CLIENTES FICTICIOS
+-- ============================================================
+
+INSERT INTO clientes (
+    nombre_contacto,
+    empresa,
+    email,
+    telefono,
+    estado,
+    direccion,
+    pais,
+    comercial_asignado,
+    fecha_alta,
+    facturacion_acumulada,
+    fecha_ultima_modificacion
+)
+VALUES
+
+-- 01
+(
+    'Carlos García López',
+    'Tech Solutions SL',
+    'carlos.garcia@techsolutions.es',
+    '+34 612345678',
+    'Activo',
+    'Calle Mallorca 123, Barcelona',
+    'España',
+    'Laura Martínez',
+    '2024-01-15',
+    45890.50,
+    '2026-09-20 10:30:00'
+),
+
+-- 02
+(
+    'Ana Rodríguez Martín',
+    'Innovatech SA',
+    'ana.rodriguez@innovatech.es',
+    '+34 623456789',
+    'Activo',
+    'Avenida Diagonal 456, Barcelona',
+    'España',
+    'David Sánchez',
+    '2023-06-20',
+    72350.75,
+    '2026-09-18 14:20:00'
+),
+
+-- 03
+(
+    'Miguel Fernández Ruiz',
+    'Global Services SL',
+    'miguel.fernandez@globalservices.es',
+    '+34 634567890',
+    'Inactivo',
+    'Calle Serrano 78, Madrid',
+    'España',
+    'Laura Martínez',
+    '2022-11-10',
+    28900.00,
+    '2026-08-15 09:45:00'
+),
+
+-- 04
+(
+    'Laura Sánchez Pérez',
+    'Digital World SL',
+    'laura.sanchez@digitalworld.es',
+    '+34 645678901',
+    'Activo',
+    'Gran Vía 25, Madrid',
+    'España',
+    'Javier López',
+    '2024-03-05',
+    56320.40,
+    '2026-09-25 16:10:00'
+),
+
+-- 05
+(
+    'Javier López Moreno',
+    'Softline Technologies',
+    'javier.lopez@softline.es',
+    '+34 656789012',
+    'Activo',
+    'Calle Colón 45, Valencia',
+    'España',
+    'David Sánchez',
+    '2023-09-12',
+    38750.20,
+    '2026-09-22 11:15:00'
+),
+
+-- 06
+(
+    'Marta Gómez Navarro',
+    'Business Group SL',
+    'marta.gomez@businessgroup.es',
+    '+34 667890123',
+    'Inactivo',
+    'Calle Aragón 210, Barcelona',
+    'España',
+    'Laura Martínez',
+    '2021-05-18',
+    19450.00,
+    '2026-07-30 08:50:00'
+),
+
+-- 07
+(
+    'Daniel Martín Torres',
+    'Data Systems SL',
+    'daniel.martin@datasystems.es',
+    '+34 678901234',
+    'Activo',
+    'Calle Alcalá 120, Madrid',
+    'España',
+    'Javier López',
+    '2024-02-28',
+    81200.90,
+    '2026-09-27 13:40:00'
+),
+
+-- 08
+(
+    'Sara Jiménez Díaz',
+    'Marketing Pro SL',
+    'sara.jimenez@marketingpro.es',
+    '+34 689012345',
+    'Activo',
+    'Calle Balmes 88, Barcelona',
+    'España',
+    'David Sánchez',
+    '2023-12-01',
+    34120.60,
+    '2026-09-19 17:25:00'
+),
+
+-- 09
+(
+    'Pablo Moreno Castro',
+    'Logistics Express',
+    'pablo.moreno@logisticsexpress.es',
+    '+34 690123456',
+    'Activo',
+    'Avenida Europa 15, Sevilla',
+    'España',
+    'Laura Martínez',
+    '2022-08-22',
+    67450.30,
+    '2026-09-21 12:00:00'
+),
+
+-- 10
+(
+    'Elena Navarro Ruiz',
+    'Consulting Partners',
+    'elena.navarro@consultingpartners.es',
+    '+34 601234567',
+    'Inactivo',
+    'Calle Recogidas 32, Granada',
+    'España',
+    'Javier López',
+    '2021-10-14',
+    15780.90,
+    '2026-06-12 10:10:00'
+),
+
+-- 11
+(
+    'Alberto Romero Sánchez',
+    'Smart Solutions SL',
+    'alberto.romero@smartsolutions.es',
+    '+34 612345679',
+    'Activo',
+    'Calle Mayor 55, Zaragoza',
+    'España',
+    'David Sánchez',
+    '2024-04-10',
+    49200.00,
+    '2026-09-26 09:30:00'
+),
+
+-- 12
+(
+    'Cristina Vidal López',
+    'Future Technologies',
+    'cristina.vidal@futuretech.es',
+    '+34 623456780',
+    'Activo',
+    'Calle Uría 40, Oviedo',
+    'España',
+    'Laura Martínez',
+    '2023-07-19',
+    36890.45,
+    '2026-09-23 15:45:00'
+),
+
+-- 13
+(
+    'Sergio Molina García',
+    'Web Factory SL',
+    'sergio.molina@webfactory.es',
+    '+34 634567891',
+    'Inactivo',
+    'Calle Larios 18, Málaga',
+    'España',
+    'Javier López',
+    '2022-02-11',
+    22100.75,
+    '2026-08-05 11:20:00'
+),
+
+-- 14
+(
+    'Patricia Ortega Martín',
+    'Finance Solutions',
+    'patricia.ortega@financesolutions.es',
+    '+34 645678902',
+    'Activo',
+    'Paseo de Gracia 90, Barcelona',
+    'España',
+    'David Sánchez',
+    '2024-05-03',
+    91500.25,
+    '2026-09-28 10:00:00'
+),
+
+-- 15
+(
+    'Álvaro Castro Pérez',
+    'Industrial Group SA',
+    'alvaro.castro@industrialgroup.es',
+    '+34 656789013',
+    'Activo',
+    'Calle Industria 75, Bilbao',
+    'España',
+    'Laura Martínez',
+    '2023-03-17',
+    58340.80,
+    '2026-09-24 14:35:00'
+),
+
+-- 16
+(
+    'Beatriz Sánchez Gómez',
+    'Cloud Systems SL',
+    'beatriz.sanchez@cloudsystems.es',
+    '+34 667890124',
+    'Activo',
+    'Calle Valencia 102, Barcelona',
+    'España',
+    'Javier López',
+    '2024-06-11',
+    73450.10,
+    '2026-09-29 09:15:00'
+),
+
+-- 17
+(
+    'Fernando Ruiz Martín',
+    'Cyber Security Iberia',
+    'fernando.ruiz@cyberiberia.es',
+    '+34 678901235',
+    'Activo',
+    'Calle Princesa 34, Madrid',
+    'España',
+    'David Sánchez',
+    '2023-01-25',
+    105200.00,
+    '2026-09-17 16:30:00'
+),
+
+-- 18
+(
+    'Nuria López García',
+    'Creative Studio SL',
+    'nuria.lopez@creativestudio.es',
+    '+34 689012346',
+    'Inactivo',
+    'Calle San Vicente 27, Valencia',
+    'España',
+    'Laura Martínez',
+    '2022-04-08',
+    18340.50,
+    '2026-07-21 12:45:00'
+),
+
+-- 19
+(
+    'Raúl Hernández Pérez',
+    'Transportes del Norte SA',
+    'raul.hernandez@transportesnorte.es',
+    '+34 690123457',
+    'Activo',
+    'Gran Vía 65, Bilbao',
+    'España',
+    'Javier López',
+    '2023-10-30',
+    62780.90,
+    '2026-09-15 11:10:00'
+),
+
+-- 20
+(
+    'Isabel Romero Díaz',
+    'Health Solutions SL',
+    'isabel.romero@healthsolutions.es',
+    '+34 601234568',
+    'Activo',
+    'Calle Real 18, A Coruña',
+    'España',
+    'David Sánchez',
+    '2024-01-30',
+    49250.30,
+    '2026-09-30 13:25:00'
+),
+
+-- 21
+(
+    'Andrés Torres Navarro',
+    'Energy Plus SA',
+    'andres.torres@energyplus.es',
+    '+34 612345680',
+    'Activo',
+    'Avenida Andalucía 145, Sevilla',
+    'España',
+    'Laura Martínez',
+    '2022-12-12',
+    85600.00,
+    '2026-09-14 10:40:00'
+),
+
+-- 22
+(
+    'María Díaz Fernández',
+    'Retail Experts SL',
+    'maria.diaz@retailexperts.es',
+    '+34 623456781',
+    'Inactivo',
+    'Calle Princesa 78, Madrid',
+    'España',
+    'Javier López',
+    '2021-09-05',
+    12650.75,
+    '2026-06-28 09:20:00'
+),
+
+-- 23
+(
+    'Jorge Martín Sánchez',
+    'Automotive Iberia',
+    'jorge.martin@automotiveiberia.es',
+    '+34 634567892',
+    'Activo',
+    'Calle Aragón 320, Barcelona',
+    'España',
+    'David Sánchez',
+    '2023-05-22',
+    119800.50,
+    '2026-09-29 15:00:00'
+),
+
+-- 24
+(
+    'Lucía Pérez Moreno',
+    'Education First SL',
+    'lucia.perez@educationfirst.es',
+    '+34 645678903',
+    'Activo',
+    'Calle Salamanca 15, Valladolid',
+    'España',
+    'Laura Martínez',
+    '2024-07-01',
+    27600.40,
+    '2026-09-26 12:10:00'
+),
+
+-- 25
+(
+    'Héctor Gómez Ruiz',
+    'Food Distribution SL',
+    'hector.gomez@fooddistribution.es',
+    '+34 656789014',
+    'Activo',
+    'Calle Industria 40, Valencia',
+    'España',
+    'Javier López',
+    '2022-06-15',
+    93450.80,
+    '2026-09-18 10:25:00'
+),
+
+-- 26
+(
+    'Silvia García Martín',
+    'Travel Solutions',
+    'silvia.garcia@travelsolutions.es',
+    '+34 667890125',
+    'Inactivo',
+    'Calle Ibiza 25, Madrid',
+    'España',
+    'David Sánchez',
+    '2021-12-20',
+    16890.00,
+    '2026-07-15 14:30:00'
+),
+
+-- 27
+(
+    'Óscar Fernández López',
+    'Legal Consulting Group',
+    'oscar.fernandez@legalgroup.es',
+    '+34 678901236',
+    'Activo',
+    'Paseo de Gracia 45, Barcelona',
+    'España',
+    'Laura Martínez',
+    '2023-08-09',
+    67890.60,
+    '2026-09-20 16:20:00'
+),
+
+-- 28
+(
+    'Carmen Sánchez Ruiz',
+    'Fashion Brands SL',
+    'carmen.sanchez@fashionbrands.es',
+    '+34 689012347',
+    'Activo',
+    'Calle Serrano 110, Madrid',
+    'España',
+    'Javier López',
+    '2024-02-14',
+    43250.25,
+    '2026-09-27 10:50:00'
+),
+
+-- 29
+(
+    'Víctor Navarro García',
+    'Construction Pro SA',
+    'victor.navarro@constructionpro.es',
+    '+34 690123458',
+    'Activo',
+    'Calle Industria 12, Bilbao',
+    'España',
+    'David Sánchez',
+    '2022-10-03',
+    147500.90,
+    '2026-09-22 09:35:00'
+),
+
+-- 30
+(
+    'Paula Martín López',
+    'Media Group SL',
+    'paula.martin@mediagroup.es',
+    '+34 601234569',
+    'Inactivo',
+    'Calle Alcalá 210, Madrid',
+    'España',
+    'Laura Martínez',
+    '2021-03-12',
+    21450.70,
+    '2026-05-30 11:15:00'
+),
+
+-- 31
+(
+    'Ricardo Ortega Sánchez',
+    'Software Factory',
+    'ricardo.ortega@softwarefactory.es',
+    '+34 612345681',
+    'Activo',
+    'Calle Llull 80, Barcelona',
+    'España',
+    'Javier López',
+    '2023-11-07',
+    98340.20,
+    '2026-09-30 16:40:00'
+),
+
+-- 32
+(
+    'Teresa Molina Pérez',
+    'Green Energy Solutions',
+    'teresa.molina@greenenergy.es',
+    '+34 623456782',
+    'Activo',
+    'Avenida del Cid 55, Valencia',
+    'España',
+    'David Sánchez',
+    '2024-04-25',
+    75120.50,
+    '2026-09-24 13:15:00'
+),
+
+-- 33
+(
+    'Adrián Romero López',
+    'Security Systems SL',
+    'adrian.romero@securitysystems.es',
+    '+34 634567893',
+    'Activo',
+    'Calle Alcalá 340, Madrid',
+    'España',
+    'Laura Martínez',
+    '2022-09-18',
+    112300.00,
+    '2026-09-28 11:45:00'
+),
+
+-- 34
+(
+    'Rocío Díaz Martín',
+    'Event Solutions',
+    'rocio.diaz@eventsolutions.es',
+    '+34 645678904',
+    'Inactivo',
+    'Calle Feria 22, Sevilla',
+    'España',
+    'Javier López',
+    '2021-07-06',
+    14560.30,
+    '2026-06-20 15:10:00'
+),
+
+-- 35
+(
+    'Manuel Torres García',
+    'Logistic Partners',
+    'manuel.torres@logisticpartners.es',
+    '+34 656789015',
+    'Activo',
+    'Calle Zaragoza 90, Barcelona',
+    'España',
+    'David Sánchez',
+    '2023-02-13',
+    84670.90,
+    '2026-09-21 10:30:00'
+),
+
+-- 36
+(
+    'Eva Hernández Ruiz',
+    'Beauty & Care SL',
+    'eva.hernandez@beautycare.es',
+    '+34 667890126',
+    'Activo',
+    'Calle Goya 56, Madrid',
+    'España',
+    'Laura Martínez',
+    '2024-06-28',
+    32900.50,
+    '2026-09-29 17:20:00'
+),
+
+-- 37
+(
+    'Guillermo Pérez Sánchez',
+    'Industrial Solutions',
+    'guillermo.perez@industrialsolutions.es',
+    '+34 678901237',
+    'Activo',
+    'Calle Gran Vía 100, Bilbao',
+    'España',
+    'Javier López',
+    '2022-05-09',
+    134800.25,
+    '2026-09-19 12:35:00'
+),
+
+-- 38
+(
+    'Clara Martín Gómez',
+    'Design Studio SL',
+    'clara.martin@designstudio.es',
+    '+34 689012348',
+    'Inactivo',
+    'Calle Enmedio 35, Castellón',
+    'España',
+    'David Sánchez',
+    '2021-11-17',
+    19850.40,
+    '2026-07-02 09:50:00'
+),
+
+-- 39
+(
+    'Diego Sánchez Moreno',
+    'Telecom Iberia SA',
+    'diego.sanchez@telecomiberia.es',
+    '+34 690123459',
+    'Activo',
+    'Avenida Diagonal 500, Barcelona',
+    'España',
+    'Laura Martínez',
+    '2023-04-04',
+    156700.80,
+    '2026-09-30 10:15:00'
+),
+
+-- 40
+(
+    'Natalia López Díaz',
+    'HR Consulting SL',
+    'natalia.lopez@hrconsulting.es',
+    '+34 601234570',
+    'Activo',
+    'Calle Velázquez 80, Madrid',
+    'España',
+    'Javier López',
+    '2024-08-12',
+    28750.00,
+    '2026-09-25 14:00:00'
+),
+
+-- 41
+(
+    'Alejandro García Pérez',
+    'Cloud Iberia SL',
+    'alejandro.garcia@cloudiberia.es',
+    '+34 612345682',
+    'Activo',
+    'Calle Diputación 200, Barcelona',
+    'España',
+    'David Sánchez',
+    '2023-10-16',
+    89200.65,
+    '2026-09-23 11:30:00'
+),
+
+-- 42
+(
+    'Irene Fernández Martín',
+    'Medical Technologies',
+    'irene.fernandez@medicaltech.es',
+    '+34 623456783',
+    'Activo',
+    'Calle Constitución 40, Zaragoza',
+    'España',
+    'Laura Martínez',
+    '2022-03-21',
+    104500.20,
+    '2026-09-27 15:40:00'
+),
+
+-- 43
+(
+    'Rubén Moreno Sánchez',
+    'Sport Management SL',
+    'ruben.moreno@sportmanagement.es',
+    '+34 634567894',
+    'Inactivo',
+    'Calle Colón 70, Valencia',
+    'España',
+    'Javier López',
+    '2021-08-30',
+    17500.00,
+    '2026-06-15 10:05:00'
+),
+
+-- 44
+(
+    'Alicia Romero García',
+    'Property Management',
+    'alicia.romero@propertymanagement.es',
+    '+34 645678905',
+    'Activo',
+    'Paseo de la Castellana 150, Madrid',
+    'España',
+    'David Sánchez',
+    '2024-03-18',
+    65890.70,
+    '2026-09-28 16:15:00'
+),
+
+-- 45
+(
+    'Mario Navarro López',
+    'Automations Tech SL',
+    'mario.navarro@automationstech.es',
+    '+34 656789016',
+    'Activo',
+    'Calle Pamplona 60, Barcelona',
+    'España',
+    'Laura Martínez',
+    '2023-05-08',
+    77340.90,
+    '2026-09-26 10:45:00'
+),
+
+-- 46
+(
+    'Laura Torres Sánchez',
+    'E-Commerce Solutions',
+    'laura.torres@ecommercesolutions.es',
+    '+34 667890127',
+    'Activo',
+    'Calle Alfonso XIII 25, Sevilla',
+    'España',
+    'Javier López',
+    '2024-01-08',
+    45600.30,
+    '2026-09-29 12:20:00'
+),
+
+-- 47
+(
+    'Eduardo Martín Ruiz',
+    'Data Analytics Group',
+    'eduardo.martin@dataanalytics.es',
+    '+34 678901238',
+    'Inactivo',
+    'Calle Hernán Cortés 44, Madrid',
+    'España',
+    'David Sánchez',
+    '2022-07-25',
+    23890.60,
+    '2026-07-18 13:50:00'
+),
+
+-- 48
+(
+    'Sonia Gómez Fernández',
+    'Communication Pro SL',
+    'sonia.gomez@communicationpro.es',
+    '+34 689012349',
+    'Activo',
+    'Calle Comte Borrell 120, Barcelona',
+    'España',
+    'Laura Martínez',
+    '2023-12-15',
+    53200.45,
+    '2026-09-24 17:00:00'
+),
+
+-- 49
+(
+    'Fernando Díaz López',
+    'Engineering Solutions',
+    'fernando.diaz@engineeringsolutions.es',
+    '+34 690123460',
+    'Activo',
+    'Calle Uría 75, Oviedo',
+    'España',
+    'Javier López',
+    '2022-01-19',
+    98500.80,
+    '2026-09-20 08:40:00'
+),
+
+-- 50
+(
+    'Mónica Sánchez Pérez',
+    'International Business SL',
+    'monica.sanchez@internationalbusiness.es',
+    '+34 601234571',
+    'Activo',
+    'Avenida Diagonal 620, Barcelona',
+    'España',
+    'David Sánchez',
+    '2024-09-02',
+    36750.25,
+    '2026-09-30 18:10:00'
+);

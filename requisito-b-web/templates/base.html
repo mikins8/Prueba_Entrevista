@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Gestión de clientes{% endblock %}</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="container nav">
+            <a class="brand" href="{{ url_for('index') }}">
+                Gestión de clientes
+            </a>
+            <a class="button primary" href="{{ url_for('nuevo') }}">
+                + Nuevo cliente
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="alert {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="container footer">
+        Aplicación de gestión de clientes · Requisito B
+    </footer>
+</body>
+</html>

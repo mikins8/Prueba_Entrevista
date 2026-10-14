@@ -1,0 +1,96 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    {{ 'Nuevo cliente' if modo == 'nuevo' else 'Editar cliente' }}
+{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <div>
+        <a href="{{ url_for('index') }}">← Volver al listado</a>
+        <h1>{{ 'Nuevo cliente' if modo == 'nuevo' else 'Editar cliente' }}</h1>
+        <p class="muted">Completa los datos del cliente.</p>
+    </div>
+</div>
+
+<form class="card form-card" method="post">
+    <div class="form-grid">
+        <div class="field">
+            <label for="nombre_contacto">Nombre de contacto *</label>
+            <input id="nombre_contacto" name="nombre_contacto" required
+                   value="{{ cliente.get('nombre_contacto', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="empresa">Empresa *</label>
+            <input id="empresa" name="empresa" required
+                   value="{{ cliente.get('empresa', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required
+                   value="{{ cliente.get('email', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" name="telefono"
+                   value="{{ cliente.get('telefono', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="estado">Estado *</label>
+            <select id="estado" name="estado" required>
+                <option value="Activo"
+                    {% if cliente.get('estado', 'Activo') == 'Activo' %}selected{% endif %}>
+                    Activo
+                </option>
+                <option value="Inactivo"
+                    {% if cliente.get('estado') == 'Inactivo' %}selected{% endif %}>
+                    Inactivo
+                </option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="direccion">Dirección</label>
+            <input id="direccion" name="direccion"
+                   value="{{ cliente.get('direccion', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="pais">País</label>
+            <input id="pais" name="pais"
+                   value="{{ cliente.get('pais', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="comercial_asignado">Comercial asignado</label>
+            <input id="comercial_asignado" name="comercial_asignado"
+                   value="{{ cliente.get('comercial_asignado', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="fecha_alta">Fecha de alta *</label>
+            <input id="fecha_alta" name="fecha_alta" type="date" required
+                   value="{{ cliente.get('fecha_alta', '') }}">
+        </div>
+
+        <div class="field">
+            <label for="facturacion_acumulada">Facturación acumulada (€)</label>
+            <input id="facturacion_acumulada" name="facturacion_acumulada"
+                   type="number" min="0" step="0.01"
+                   value="{{ cliente.get('facturacion_acumulada', 0) }}">
+        </div>
+    </div>
+
+    <p class="muted">Los campos marcados con * son obligatorios.</p>
+
+    <div class="form-actions">
+        <a class="button secondary" href="{{ url_for('index') }}">Cancelar</a>
+        <button class="button primary" type="submit">Guardar cliente</button>
+    </div>
+</form>
+{% endblock %}
